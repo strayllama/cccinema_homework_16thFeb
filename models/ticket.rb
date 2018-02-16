@@ -18,12 +18,31 @@ class Ticket
     @id = ticket['id'].to_i
   end
 
+  def update()
+    sql = "UPDATE tickets
+          SET ('customer_id', 'film_id') = ($1, $2)
+          WHERE id = $3;"
+    values = [@customer_id, @film_id, @id]
+    SqlRunner.run(sql, values)
+  end
 
   # TICKET CLASS METHODS
 
-    def Ticket.delete_all()
-      sql = "DELETE FROM tickets"
-      SqlRunner.run(sql, [])
-    end
+  def Ticket.create_ticket(a_customer_id, a_film_id)
+    new_ticket = Ticket.new({'customer_id' => a_customer_id, 'film_id' => a_film_id})
+    new_ticket.save()
+  end
+
+  def Ticket.return_all()
+    sql = "SELECT * FROM tickets"
+    tickets_array = SqlRunner.run(sql, [])
+    tickets = tickets_array.map { |ticket_hash| Ticket.new(ticket_hash) }
+    return tickets
+  end
+
+  def Ticket.delete_all()
+    sql = "DELETE FROM tickets"
+    SqlRunner.run(sql, [])
+  end
 
 end # end CLASS TICKET
