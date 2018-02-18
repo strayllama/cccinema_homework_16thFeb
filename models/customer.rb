@@ -12,9 +12,20 @@ attr_accessor(:name)
     @funds = options['funds'].to_i
   end
 
-  def buy_ticket(a_film)
-    remove_funds(a_film.price())
-    Ticket.create_ticket(@id, a_film.id())
+  def buy_ticket(a_screening)
+    if a_screening.check_for_seats()
+      sql = "SELECT * FROM films WHERE
+            id = $1
+            ;"
+      values = [a_screening.film_id()]
+      the_film_hash = SqlRunner.run(sql, values)[0]
+      the_film = Film.new(the_film_hash)
+      remove_funds(the_film.price())
+      Ticket.create_ticket(@id,a_screening.id())
+      a_screening.sell_seat()
+    else
+      return "No seats avalible!"
+    end
   end
 
   def remove_funds(an_amount)
@@ -39,30 +50,57 @@ attr_accessor(:name)
     SqlRunner.run(sql, values)
   end
 
-  def films()
-    sql = "SELECT films.*
-          FROM films
+  def screenings()
+    sql = "SELECT screenings.*
+          FROM screenings
           INNER JOIN tickets
-          ON films.id = tickets.film_id
+          ON screenings.id = tickets.screening_id
           WHERE tickets.customer_id = $1
           ;"
     values = [@id]
-    customer_films_array = SqlRunner.run(sql, values)
-    customer_films = customer_films_array.map { |film_hash| Film.new(film_hash)}
-    return customer_films
+    screenings_array = SqlRunner.run(sql, values)
+    customer_screenings = screenings_array.map { |screening_hash| Screening.new(screening_hash)}
+    return customer_screenings
   end
 
+# now needs to be screenings!!! see above now --^
+  # def films()
+  #   sql = "SELECT films.*
+  #         FROM films
+  #         INNER JOIN tickets
+  #         ON films.id = tickets.film_id
+  #         WHERE tickets.customer_id = $1
+  #         ;"
+  #   values = [@id]
+  #   customer_films_array = SqlRunner.run(sql, values)
+  #   customer_films = customer_films_array.map { |film_hash| Film.new(film_hash)}
+  #   return customer_films
+  # end
+
   def number_of_tickets()
-    sql = "SELECT films.*
-          FROM films
+    sql = "SELECT screenings.*
+          FROM screenings
           INNER JOIN tickets
-          ON films.id = tickets.film_id
+          ON screenings.id = tickets.screening_id
           WHERE tickets.customer_id = $1
           ;"
     values = [@id]
     tickets = SqlRunner.run(sql, values)
     return tickets.count()
   end
+
+# Changed to above--^
+  # def number_of_tickets()
+  #   sql = "SELECT films.*
+  #         FROM films
+  #         INNER JOIN tickets
+  #         ON films.id = tickets.film_id
+  #         WHERE tickets.customer_id = $1
+  #         ;"
+  #   values = [@id]
+  #   tickets = SqlRunner.run(sql, values)
+  #   return tickets.count()
+  # end
 
   # CUSTOMER CLASS METHODS
 

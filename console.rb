@@ -1,19 +1,7 @@
-# Your app should have:
-# Customers
-# name
-# funds
-
-# Films
-# title
-# price
-
-# Tickets
-# customer_id
-# film_id
-
 require_relative('models/customer.rb')
 require_relative('models/ticket.rb')
 require_relative('models/film.rb')
+require_relative('models/screening.rb')
 
 require('pry-byebug')
 
@@ -48,19 +36,34 @@ film4.save()
 film5.save()
 film6.save()
 
-customer1.buy_ticket(film2)
-customer1.buy_ticket(film3)
-customer1.buy_ticket(film6)
-customer2.buy_ticket(film1)
-customer2.buy_ticket(film3)
-customer2.buy_ticket(film6)
-customer3.buy_ticket(film1)
-customer3.buy_ticket(film2)
-customer3.buy_ticket(film4)
-customer4.buy_ticket(film1)
-customer4.buy_ticket(film4)
-customer5.buy_ticket(film1)
-customer6.buy_ticket(film1)
+# 1 screen at this cinema, so only 1 film at a time. Capacity of 4 seats for testing.
+# Price still needs to come from the film.
+screening1 = Screening.new({ 'film_id' => film1.id(), 'showing_time' => "9:00" })
+screening2 = Screening.new({ 'film_id' => film2.id(), 'showing_time' => "11:00" })
+screening3 = Screening.new({ 'film_id' => film4.id(), 'showing_time' => "13:30" })
+screening4 = Screening.new({ 'film_id' => film5.id(), 'showing_time' => "16:00" })
+screening5 = Screening.new({ 'film_id' => film3.id(), 'showing_time' => "17:45" })
+screening6 = Screening.new({ 'film_id' => film6.id(), 'showing_time' => "19:00" })
+screening1.save()
+screening2.save()
+screening3.save()
+screening4.save()
+screening5.save()
+screening6.save()
+
+customer1.buy_ticket(screening2)
+customer1.buy_ticket(screening5)
+customer1.buy_ticket(screening6)
+customer2.buy_ticket(screening1)
+customer2.buy_ticket(screening5)
+customer2.buy_ticket(screening6)
+customer3.buy_ticket(screening1)
+customer3.buy_ticket(screening2)
+customer3.buy_ticket(screening3)
+customer4.buy_ticket(screening1)
+customer4.buy_ticket(screening3)
+customer5.buy_ticket(screening1)
+customer6.buy_ticket(screening1)
 
 
 

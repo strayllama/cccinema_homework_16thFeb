@@ -42,15 +42,28 @@ class Film
   end
 
   def tickets_sold()
-    sql = "SELECT customers.*
-          FROM customers
-          INNER JOIN tickets
-          ON customers.id = tickets.customer_id
-          WHERE tickets.film_id = $1;"
+    sql = "SELECT tickets.*
+          FROM tickets
+          INNER JOIN screenings
+          ON screenings.id = ticket.screening_id
+          WHERE screenings.film_id = $1;"
     values = [@id]
     customers = SqlRunner.run(sql, values)
     return customers.count
   end
+
+# NOW needs to innerjoin via screenings!
+  # def tickets_sold()
+  #   sql = "SELECT customers.*
+  #         FROM customers
+  #         INNER JOIN tickets
+  #         ON customers.id = tickets.customer_id
+  #         WHERE tickets.film_id = $1;"
+  #   values = [@id]
+  #   customers = SqlRunner.run(sql, values)
+  #   return customers.count
+  # end
+
 
 # FILMS CLASS METHODS
 

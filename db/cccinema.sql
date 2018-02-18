@@ -1,6 +1,9 @@
 DROP TABLE tickets;
-DROP TABLE customers;
+DROP TABLE screenings;
 DROP TABLE films;
+DROP TABLE customers;
+
+
 
 CREATE TABLE customers (
   id SERIAL4 PRIMARY KEY,
@@ -14,15 +17,14 @@ CREATE TABLE films (
   price smallint
 );
 
+CREATE TABLE screenings (
+  id SERIAL4 PRIMARY KEY,
+  film_id INT4 REFERENCES films(id) ON DELETE CASCADE,
+  showing_time VARCHAR(255)
+);
+
 CREATE TABLE tickets (
   id SERIAL4 PRIMARY KEY,
   customer_id INT4 REFERENCES customers(id) ON DELETE CASCADE,
-  film_id INT4 REFERENCES films(id) ON DELETE CASCADE
+  screening_id INT4 REFERENCES screenings(id) ON DELETE CASCADE
 );
-
--- BEFORE THIS WORKS - puts screenings_id in tickets!!
--- CREATE TABLE screenings (
---   id SERIAL4 PRIMARY KEY,
---   film_id INT4 REFERENCES films(id) ON DELETE CASCADE,
---   showing_time VARCHAR(255)
--- )
